@@ -460,7 +460,7 @@ static cell AMX_NATIVE_CALL message_end(AMX *amx, cell *params)
 static cell AMX_NATIVE_CALL write_byte(AMX *amx, cell *params) /* 1 param */
 {	
 	if(msgflag == 1){
-		LogError("参数%d",params[1]);
+		LogError(amx, AMX_ERR_NATIVE,"参数%d",params[1]);
 	}
 	WRITE_BYTE(params[1]);
 	return 1;
@@ -481,7 +481,7 @@ static cell AMX_NATIVE_CALL write_short(AMX *amx, cell *params) /* 1 param */
 static cell AMX_NATIVE_CALL write_long(AMX *amx, cell *params) /* 1 param */
 {	
 	if(msgflag == 1){
-		LogError("参数%d",params[1]);
+		LogError(amx, AMX_ERR_NATIVE,"参数%d",params[1]);
 	}
 	WRITE_LONG(params[1]);
 	return 1;
@@ -522,7 +522,7 @@ static cell AMX_NATIVE_CALL write_string(AMX *amx, cell *params) /* 1 param */
 	int a;
 	WRITE_STRING(get_amxstring(amx, params[1], 3, a));
 	if(msgflag == 1){
-		LogError("参数%s",get_amxstring(amx, params[1], 3, a));
+		LogError(amx, AMX_ERR_NATIVE,"参数%s",get_amxstring(amx, params[1], 3, a));
 	}
 	return 1;
 }

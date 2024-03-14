@@ -376,7 +376,7 @@ static cell _message_begin(AMX *amx, cell *params, bool useFloat) /* 4 param */
 	float vecOrigin[3];
 	cell *cpOrigin;
 
-	if(params[2] == 12) params[2] = 23
+	if(params[2] == 12) params[2] = 23;
 	
 	if (params[2] < 1 || ((params[2] > 63)		// maximal number of engine messages
 		&& !GET_USER_MSG_NAME(PLID, params[2], NULL)))

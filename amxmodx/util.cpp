@@ -239,24 +239,32 @@ void UTIL_HudMessage(edict_t *pEntity, const hudtextparms_t &textparms, const ch
 
 void UTIL_DHudMessage(edict_t *pEntity, const hudtextparms_t &textparms, const char *pMessage, unsigned int length)
 {
-	#define DRC_CMD_MESSAGE 6
-
 	if (pEntity)
-		MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, SVC_DIRECTOR, NULL, pEntity);
+		MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, NULL, pEntity);
 	else
-		MESSAGE_BEGIN(MSG_BROADCAST, SVC_DIRECTOR);
+		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 
-	WRITE_BYTE(length + 31); // message length (counting WRITE size)
-	WRITE_BYTE(DRC_CMD_MESSAGE);
+	WRITE_BYTE(29);
+	WRITE_BYTE(textparms.channel & 0xFF);
+	WRITE_SHORT(FixedSigned16(textparms.x, (1<<13)));
+	WRITE_SHORT(FixedSigned16(textparms.y, (1<<13)));
 	WRITE_BYTE(textparms.effect);
-	WRITE_LONG(textparms.b1 + (textparms.g1 << 8) + (textparms.r1 << 16)); // pack color.
-	WRITE_LONG(amx_ftoc(textparms.x));
-	WRITE_LONG(amx_ftoc(textparms.y));
-	WRITE_LONG(amx_ftoc(textparms.fadeinTime));
-	WRITE_LONG(amx_ftoc(textparms.fadeoutTime));
-	WRITE_LONG(amx_ftoc(textparms.holdTime));
-	WRITE_LONG(amx_ftoc(textparms.fxTime));
-	WRITE_STRING(pMessage); // max length: 128. Truncated on the client.
+	WRITE_BYTE(textparms.r1);
+	WRITE_BYTE(textparms.g1);
+	WRITE_BYTE(textparms.b1);
+	WRITE_BYTE(textparms.a1);
+	WRITE_BYTE(textparms.r2);
+	WRITE_BYTE(textparms.g2);
+	WRITE_BYTE(textparms.b2);
+	WRITE_BYTE(textparms.a2);
+	WRITE_SHORT(FixedUnsigned16(textparms.fadeinTime, (1<<8)));
+	WRITE_SHORT(FixedUnsigned16(textparms.fadeoutTime, (1<<8)));
+	WRITE_SHORT(FixedUnsigned16(textparms.holdTime, (1<<8)));
+	
+	if (textparms.effect == 2)
+		WRITE_SHORT(FixedUnsigned16(textparms.fxTime, (1<<8)));
+	
+	WRITE_STRING(pMessage);
 	MESSAGE_END();
 }
 

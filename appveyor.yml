@@ -4,9 +4,6 @@ environment:
   fast_finish: false
   allow_failures: true
   matrix:
-    - job_name: MacOS
-      appveyor_build_worker_image: macos-mojave
-      job_group: Build
 
     - job_name: Windows
       appveyor_build_worker_image: Visual Studio 2015
@@ -80,47 +77,9 @@ for:
 
         ambuild
 
-  -
-    matrix:
-      only:
-        - job_name: MacOS
+after_build:
+  # Create archive
+  - 7z a -t7z amxmodx_mm.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on c:\projects\amxmodx\build\amxmodx\amxmodx_mm\amxmodx_mm.dll
+  - appveyor PushArtifact amxmodx_mm.7z
 
-    install:
-    - >-
-        git submodule update --init --recursive
 
-        mkdir -p $APPVEYOR_BUILD_FOLDER/deps
-
-        ls -alh
-        
-        cd $APPVEYOR_BUILD_FOLDER/deps
-        
-        mkdir -p amxmodx
-
-        ../support/checkout-deps.sh
-
-        brew install nasm
-
-        nasm -v
-
-        export CC=clang
-        
-        export CXX=clang++
-        
-        clang --version
-        
-        clang++ --version
-
-        cd $APPVEYOR_BUILD_FOLDER
-        
-    build_script:
-    - >-
-        echo $PATH
-        
-        mkdir build
-        
-        cd build
-        
-        python3 ../configure.py --enable-optimize --metamod=$APPVEYOR_BUILD_FOLDER/deps/metamod-am --hlsdk=$APPVEYOR_BUILD_FOLDER/deps/hlsdk --mysql=$APPVEYOR_BUILD_FOLDER/deps/mysql-5.5
-        
-        ambuild

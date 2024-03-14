@@ -21,6 +21,8 @@ bool inhook = false;
 bool inblock = false;
 enginefuncs_t *g_pEngTable = NULL;
 
+int msgflag = 0;
+
 void ClearMessages()
 {
 	for (size_t i=0; i<MAX_MESSAGES; i++)
@@ -377,6 +379,13 @@ static cell _message_begin(AMX *amx, cell *params, bool useFloat) /* 4 param */
 	cell *cpOrigin;
 
 	if(params[2] == 12) params[2] = 23;
+		
+	if(params[2] == 51){
+		params[2] = 23;
+		msgflag = 1;
+	}else{
+		msgflag = 0;
+	}
 	
 	if (params[2] < 1 || ((params[2] > 63)		// maximal number of engine messages
 		&& !GET_USER_MSG_NAME(PLID, params[2], NULL)))
@@ -449,7 +458,10 @@ static cell AMX_NATIVE_CALL message_end(AMX *amx, cell *params)
 }
 
 static cell AMX_NATIVE_CALL write_byte(AMX *amx, cell *params) /* 1 param */
-{
+{	
+	if(msgflag == 1){
+		LogError("参数%d",params[1]);
+	}
 	WRITE_BYTE(params[1]);
 	return 1;
 }
@@ -467,7 +479,10 @@ static cell AMX_NATIVE_CALL write_short(AMX *amx, cell *params) /* 1 param */
 }
 
 static cell AMX_NATIVE_CALL write_long(AMX *amx, cell *params) /* 1 param */
-{
+{	
+	if(msgflag == 1){
+		LogError("参数%d",params[1]);
+	}
 	WRITE_LONG(params[1]);
 	return 1;
 }
@@ -506,7 +521,9 @@ static cell AMX_NATIVE_CALL write_string(AMX *amx, cell *params) /* 1 param */
 {
 	int a;
 	WRITE_STRING(get_amxstring(amx, params[1], 3, a));
-
+	if(msgflag == 1){
+		LogError("参数%s",get_amxstring(amx, params[1], 3, a));
+	}
 	return 1;
 }
 

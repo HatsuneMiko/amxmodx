@@ -599,7 +599,7 @@ static cell AMX_NATIVE_CALL show_hudmessage(AMX *amx, cell *params) /* 2 param *
 		 * guarantee this to be between 0-4
 		 * if it's not auto, we don't care
 		 */
-		channel = abs(g_hudset.channel % 5);
+		channel = abs(g_hudset.channel % 9);
 	}
 	if (params[1] == 0)
 	{
